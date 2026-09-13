@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Calvis AI{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #080c14;
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 35px;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #f43f5e;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #38bdf8;
+        }
+
+        /* Main Wrapper */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* Flash Alerts */
+        .flash-container {
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 20px;
+        }
+
+        .flash-msg {
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            background: rgba(2, 132, 199, 0.2);
+            border: 1px solid #0284c7;
+            color: #38bdf8;
+        }
+
+        .flash-warning {
+            background: rgba(244, 63, 94, 0.2);
+            border: 1px solid #f43f5e;
+            color: #fb7185;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">CALVIS<span>.AI</span></a>
+        <div class="nav-links">
+            <a href="/">HOME</a>
+            {% if session.get('username') %}
+                <a href="/user">USER</a>
+                <a href="/calvis">CALVIS</a>
+                <a href="/logout" style="color: #f43f5e;">LOGOUT</a>
+            {% else %}
+                <a href="/login">LOGIN</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash-msg {% if category == 'warning' %}flash-warning{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='Js/main.js') }}"></script>
+</body>
+</html>

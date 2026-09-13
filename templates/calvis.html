@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Calvis - Voice Assistant{% endblock %}
+
+{% block content %}
+<style>
+    .calvis-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        width: 100%;
+        max-width: 650px;
+    }
+
+    .orb-wrapper {
+        position: relative;
+        width: 160px;
+        height: 160px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 25px 0;
+        cursor: pointer;
+    }
+
+    .orb {
+        width: 90px;
+        height: 90px;
+        background: radial-gradient(circle, #38bdf8 0%, #0284c7 70%, #080c14 100%);
+        border-radius: 50%;
+        box-shadow: 0 0 40px #38bdf8, 0 0 80px #0284c7;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .orb-wrapper.listening .orb {
+        background: radial-gradient(circle, #f43f5e 0%, #be123c 70%, #080c14 100%);
+        box-shadow: 0 0 50px #f43f5e, 0 0 100px #e11d48;
+        animation: pulse-listen 1.2s infinite ease-in-out;
+    }
+
+    .orb-wrapper.speaking .orb {
+        background: radial-gradient(circle, #818cf8 0%, #4f46e5 70%, #080c14 100%);
+        box-shadow: 0 0 50px #818cf8, 0 0 100px #6366f1;
+        animation: pulse-speak 0.8s infinite ease-in-out;
+    }
+
+    .ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 2px solid transparent;
+    }
+
+    .ring-1 {
+        width: 130px;
+        height: 130px;
+        border-top-color: #38bdf8;
+        border-bottom-color: #38bdf8;
+        animation: spin 6s linear infinite;
+    }
+
+    .ring-2 {
+        width: 155px;
+        height: 155px;
+        border-left-color: #818cf8;
+        border-right-color: #818cf8;
+        animation: spin-reverse 8s linear infinite;
+    }
+
+    @keyframes pulse-listen {
+        0%, 100% { transform: scale(0.95); }
+        50% { transform: scale(1.15); }
+    }
+
+    @keyframes pulse-speak {
+        0%, 100% { transform: scale(1.0); }
+        50% { transform: scale(1.1); }
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+
+    .status-text {
+        font-size: 1.05rem;
+        color: #94a3b8;
+        margin-bottom: 20px;
+        min-height: 28px;
+    }
+
+    .transcript-box {
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        border-radius: 12px;
+        padding: 18px;
+        width: 100%;
+        text-align: left;
+        margin-top: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .transcript-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #38bdf8;
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+
+    .transcript-content {
+        color: #f1f5f9;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        min-height: 30px;
+    }
+
+    .talk-btn {
+        background: linear-gradient(135deg, #0284c7, #2563eb);
+        border: none;
+        color: white;
+        padding: 12px 28px;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 30px;
+        cursor: pointer;
+        box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .talk-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+    }
+
+    .talk-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+</style>
+
+<div class="calvis-container">
+    <h2>CALVIS Core Active</h2>
+    
+    <div class="orb-wrapper" id="orbWrapper">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="orb"></div>
+    </div>
+
+    <div class="status-text" id="statusText">Tap orb or button to start talking</div>
+
+    <button class="talk-btn" id="talkBtn">Start Voice Session 🎙️</button>
+
+    <div class="transcript-box">
+        <div class="transcript-label">User Input</div>
+        <div class="transcript-content" id="userSpeech">Waiting for speech...</div>
+    </div>
+
+    <div class="transcript-box">
+        <div class="transcript-label">Calvis Response</div>
+        <div class="transcript-content" id="aiReply">---</div>
+    </div>
+</div>
+{% endblock %}

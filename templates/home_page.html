@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Calvis AI | Next-Gen Voice Assistant{% endblock %}
+
+{% block content %}
+<style>
+    .hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px 20px 40px; }
+    .hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 15px; background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 600px; margin-bottom: 40px; line-height: 1.6; }
+
+    .orb-wrapper { position: relative; width: 180px; height: 180px; display: flex; justify-content: center; align-items: center; margin-bottom: 40px; }
+    .orb { width: 100px; height: 100px; background: radial-gradient(circle, #38bdf8 0%, #0369a1 70%, #080c14 100%); border-radius: 50%; box-shadow: 0 0 50px #38bdf8, 0 0 100px #0284c7; animation: pulse 3s infinite ease-in-out; }
+    .ring { position: absolute; border-radius: 50%; border: 2px solid transparent; }
+    .ring-1 { width: 140px; height: 140px; border-top-color: #38bdf8; border-bottom-color: #38bdf8; animation: spin 4s linear infinite; }
+    .ring-2 { width: 170px; height: 170px; border-left-color: #818cf8; border-right-color: #818cf8; animation: spin-reverse 6s linear infinite; }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(0.95); opacity: 0.8; }
+        50% { transform: scale(1.08); opacity: 1; box-shadow: 0 0 70px #38bdf8, 0 0 120px #818cf8; }
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 900px; width: 100%; margin: 0 auto 30px; padding: 0 20px; }
+    .card { background: #0f172a; border: 1px solid #1e293b; padding: 25px; border-radius: 12px; text-align: left; transition: 0.3s; }
+    .card:hover { border-color: #38bdf8; transform: translateY(-5px); }
+    .card h3 { color: #38bdf8; margin-bottom: 10px; font-size: 1.1rem; }
+    .card p { color: #64748b; font-size: 0.95rem; line-height: 1.4; }
+
+    .btn-primary-action {
+        text-decoration: none;
+        background: linear-gradient(135deg, #0284c7, #2563eb);
+        color: #fff;
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary-action:hover { transform: translateY(-2px); box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
+</style>
+
+<div class="hero">
+    <div class="orb-wrapper">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="orb"></div>
+    </div>
+
+    <h1>Meet Calvis, Your Personal AI</h1>
+    <p>Voice-activated, lightning-fast intelligence powered by Llama 3 models. Speak directly from your browser.</p>
+
+    {% if not session.get('username') %}
+        <a href="/login" class="btn-primary-action">Launch Assistant</a>
+    {% else %}
+        <a href="/calvis" class="btn-primary-action">Open Calvis Interface 🎙️</a>
+    {% endif %}
+</div>
+
+<div class="features">
+    <div class="card">
+        <h3>⚡ Real-Time Voice Chat</h3>
+        <p>Hands-free speech recognition paired with immediate audio playback.</p>
+    </div>
+    <div class="card">
+        <h3>🧠 Groq Llama 3 Engine</h3>
+        <p>High-speed response times powered by Groq cloud processing.</p>
+    </div>
+    <div class="card">
+        <h3>🔒 Secure Profiles</h3>
+        <p>Personalized sessions linked with SQLite user storage.</p>
+    </div>
+</div>
+{% endblock %}

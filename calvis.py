@@ -105,7 +105,6 @@ def calvis():
         return redirect(url_for("login"))
     return render_template("calvis.html")
 
-
 @cal.route("/api/chat", methods=["POST"])
 def chat_api():
     data = request.get_json()
@@ -114,26 +113,32 @@ def chat_api():
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
 
-    try:
-        
-        selected_model = "llama-3.1-8b-instant"
+    models = [
+        "llama-3.3-70b-versatile",
+        "llama-3.1-8b-instant",
+        "gemma2-9b-it"
+    ]
 
-        response = groq_client.chat.completions.create(
-            model=selected_model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are Calvis, an elite AI assistant in the style of Jarvis. Be concise, witty, and helpful.",
-                },
-                {"role": "user", "content": user_message},
-            ],
-        )
-        reply = response.choices[0].message.content
-        return jsonify({"reply": reply})
+    for model in models:
+        try:
+            response = groq_client.chat.completions.create(
+                model=model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are Calvis, an elite AI assistant in the style of Jarvis. Be concise, witty, and helpful.",
+                    },
+                    {"role": "user", "content": user_message},
+                ],
+            )
+            reply = response.choices[0].message.content
+            return jsonify({"reply": reply})
+        except Exception as e:
+            print(f"Model '{model}' failed with error: {e}. Attempting fallback...")
+            continue
 
-    except Exception as e:
-        print(f"Error in chat_api: {e}")
-        return jsonify({"error": str(e)}), 500
+    return jsonify({"error": "All Groq model endpoints are currently unavailable."}), 500
+
 
 
 

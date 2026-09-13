@@ -1,1 +1,1 @@
-web: gunicorn app:cal
+web: gunicorn calvis:cal

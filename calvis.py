@@ -113,10 +113,12 @@ def chat_api():
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
 
+        
     models = [
-        "llama-3.3-70b-versatile",
-        "llama-3.1-8b-instant",
-        "gemma2-9b-it"
+        "openai/gpt-oss-20b",
+        "openai/gpt-oss-120b",
+        "qwen/qwen3.6-27b",
+        "llama-3.3-70b-versatile", 
     ]
 
     for model in models:

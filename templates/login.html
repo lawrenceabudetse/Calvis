@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Calvis AI{% endblock %}
+
+{% block content %}
+<style>
+    .login-card {
+        background: #0f172a;
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 12px;
+        padding: 35px 30px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        text-align: center;
+    }
+
+    .login-card h2 {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+        color: #38bdf8;
+    }
+
+    .login-card p {
+        color: #94a3b8;
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px 14px;
+        background: #080c14;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        color: #f1f5f9;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+        border-color: #38bdf8;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #0284c7, #2563eb);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    }
+</style>
+
+<div class="login-card">
+    <h2>Welcome Back</h2>
+    <p>Enter your details to access Calvis.</p>
+
+    <form action="/login" method="POST">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="e.g. Alex" required autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="alex@example.com" required autocomplete="off">
+        </div>
+        <button type="submit" class="submit-btn">Continue to Calvis 🎙️</button>
+    </form>
+</div>
+{% endblock %}

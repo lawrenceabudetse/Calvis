@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. SELECT ALL HTML UI ELEMENTS Safely
+    // 1. SELECT ALL HTML UI ELEMENTS SAFELY
     const orbWrapper = document.getElementById('orbWrapper');
     const statusText = document.getElementById('statusText');
     const talkBtn = document.getElementById('talkBtn');
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 6. TEXT TO SPEECH (Calvis talks out loud)
+    // 6. TEXT TO SPEECH (Calvis talks out loud - Male Voice)
     function speakBack(text) {
         if (!('speechSynthesis' in window)) {
             resetUI();
@@ -131,19 +131,21 @@ document.addEventListener("DOMContentLoaded", () => {
         const utterance = new SpeechSynthesisUtterance(text);
         const activeVoices = voices.length ? voices : window.speechSynthesis.getVoices();
 
-        // Find a natural fallback voice profile matching English criteria
-        const warmVoice = activeVoices.find(v => 
-            v.name.includes("Google US English") || 
-            v.name.includes("Aria") || 
-            v.name.includes("Natural") ||
-            (v.lang === "en-US" && v.name.includes("Samantha"))
+        // Filter for male voice profiles across Windows, Mac, iOS, Android, and Chrome
+        const maleVoice = activeVoices.find(v => 
+            v.name.includes("David") || 
+            v.name.includes("Daniel") || 
+            v.name.includes("Google UK English Male") ||
+            v.name.includes("Guy") ||
+            v.name.toLowerCase().includes("male")
         );
 
-        if (warmVoice) {
-            utterance.voice = warmVoice;
+        if (maleVoice) {
+            utterance.voice = maleVoice;
         }
 
-        utterance.pitch = 1.05;
+        // Lower pitch slightly (0.85) for a deeper assistant tone
+        utterance.pitch = 0.85;
         utterance.rate = 1.0;
 
         // UI states while talking out loud

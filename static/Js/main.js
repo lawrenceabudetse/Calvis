@@ -145,8 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Lower pitch slightly (0.85) for a deeper assistant tone
-        utterance.pitch = 0.85;
-        utterance.rate = 1.0;
+        utterance.pitch = 0.65;
+        utterance.rate = 0.86;
 
         // UI states while talking out loud
         utterance.onstart = () => {

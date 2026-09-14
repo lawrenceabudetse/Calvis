@@ -3,3 +3,4 @@ Flask-SQLAlchemy
 groq
 python-dotenv
 gunicorn
+openai

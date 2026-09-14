@@ -146,9 +146,9 @@ def chat_api():
     if not reply:
         return jsonify({"error": "All Groq model endpoints are currently unavailable."}), 500
 
-    # Sanitize reply text: remove markdown symbols (*, _, #, `, ~, >, <, /, \, |, ^, +) and bullet dashes
     clean_reply = re.sub(r'[*_#\`\~><\\/|^\+]', '', reply)
-    clean_reply = re.sub(r'(?<=^|\s)-+(?=\s|$)', '', clean_reply)
+    
+    clean_reply = re.sub(r'(?:^|\s)-+(?:\s|$)', ' ', clean_reply)
     clean_reply = re.sub(r'\s+', ' ', clean_reply).strip()
 
     # Generate OpenAI Onyx Audio stream

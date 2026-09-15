@@ -1,18 +1,14 @@
-import base64
-import io
 import os
 import re
 from datetime import timedelta
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from groq import Groq
-from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 SECRET_KEY = os.environ.get("SECRET_KEY")
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
 if not SECRET_KEY or not GROQ_API_KEY:
     raise RuntimeError("Missing SECRET_KEY or GROQ_API_KEY in environment variables.")
@@ -25,8 +21,6 @@ cal.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(cal)
 groq_client = Groq(api_key=GROQ_API_KEY)
-# Initialize OpenAI client for Onyx TTS (falls back cleanly if key is not present)
-openai_client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 class users(db.Model):
     _id = db.Column("id", db.Integer, primary_key=True)
@@ -125,6 +119,8 @@ def chat_api():
         "CRITICAL VOICE CONSTRAINT: Your response is fed directly to a text-to-speech engine. "
         "Never use markdown formatting, asterisks, bullet point symbols, hyphens, hashes, slashes, or special characters. "
         "Write strictly in plain, clear, naturally punctuated sentences."
+        "Correct grammer of userrs u are speaking to"
+        "Aid in all aspect of education. Even including deep leaning such as prgramming, system structures, ..."
     )
 
     reply = None
@@ -138,7 +134,7 @@ def chat_api():
                 ],
             )
             reply = response.choices[0].message.content
-            break  # Exit loop as soon as a model responds successfully
+            break  
         except Exception as e:
             print(f"Model '{model}' failed with error: {e}. Attempting fallback...")
             continue
@@ -147,24 +143,10 @@ def chat_api():
         return jsonify({"error": "All Groq model endpoints are currently unavailable."}), 500
 
     clean_reply = re.sub(r'[*_#\`\~><\\/|^\+]', '', reply)
-    
     clean_reply = re.sub(r'(?:^|\s)-+(?:\s|$)', ' ', clean_reply)
     clean_reply = re.sub(r'\s+', ' ', clean_reply).strip()
 
-    # Generate OpenAI Onyx Audio stream
-    audio_b64 = None
-    if openai_client:
-        try:
-            tts_res = openai_client.audio.speech.create(
-                model="tts-1",
-                voice="onyx",
-                input=clean_reply
-            )
-            audio_b64 = base64.b64encode(tts_res.content).decode("utf-8")
-        except Exception as tts_err:
-            print(f"Onyx TTS generation failed: {tts_err}")
-
-    return jsonify({"reply": clean_reply, "audio": audio_b64})
+    return jsonify({"reply": clean_reply})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

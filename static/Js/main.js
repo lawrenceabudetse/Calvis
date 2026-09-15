@@ -6,15 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const userSpeech = document.getElementById('userSpeech');
     const aiReply = document.getElementById('aiReply');
 
-    let currentAudio = null;
-
     // 2. TERMINATE ALL ACTIVE AUDIO PLAYBACK & SYNTHESIS
     function stopAllAudio() {
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
-            currentAudio = null;
-        }
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
         }
@@ -70,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
             recognition.stop();
             resetUI();
         } else {
-            stopAllAudio(); // Halts active playback before starting microphone
+            stopAllAudio(); // Halts active speech before starting microphone
             recognition.start();
         }
     }
@@ -93,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: message })
             });
 
@@ -101,12 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.reply) {
                 if (aiReply) aiReply.innerText = data.reply;
-
-                if (data.audio) {
-                    playOnyxAudio(data.audio);
-                } else {
-                    resetUI();
-                }
+                speakResponse(data.reply);
             } else {
                 if (aiReply) aiReply.innerText = "Error: " + (data.error || "Failed to get response");
                 resetUI();
@@ -118,30 +106,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 6. ONYX AUDIO STREAM PLAYER
-    function playOnyxAudio(base64Audio) {
-        stopAllAudio();
+    // 6. BROWSER SPEECH SYNTHESIS SPEAKER
+    function speakResponse(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
 
-        currentAudio = new Audio("data:audio/mp3;base64," + base64Audio);
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 0.9;
 
-        currentAudio.onplay = () => {
-            if (orbWrapper) orbWrapper.className = 'orb-wrapper speaking';
-            if (statusText) statusText.innerText = "Calvis is speaking... 🗣️";
-        };
+            utterance.onstart = () => {
+                if (orbWrapper) orbWrapper.className = 'orb-wrapper speaking';
+                if (statusText) statusText.innerText = "Calvis is speaking... 🗣️";
+            };
 
-        currentAudio.onended = () => {
+            utterance.onend = () => {
+                resetUI();
+            };
+
+            utterance.onerror = (e) => {
+                console.error("Speech synthesis error:", e);
+                resetUI();
+            };
+
+            window.speechSynthesis.speak(utterance);
+        } else {
             resetUI();
-        };
-
-        currentAudio.onerror = (e) => {
-            console.error("Audio Playback Error:", e);
-            resetUI();
-        };
-
-        currentAudio.play().catch(err => {
-            console.error("Audio playback blocked by browser:", err);
-            resetUI();
-        });
+        }
     }
 
     // 7. EVENT LISTENERS

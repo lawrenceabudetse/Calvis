@@ -150,6 +150,77 @@ def chat_api():
 
     return jsonify({"reply": clean_reply})
 
+
+@cal.route('/feedback', methods=['POST', 'GET'])
+def feedback():
+    if request.method == 'POST':
+        user_message = request.form.get('feedback')
+        current_user = session.get('usernm', 'Anonymous')
+        
+        new_feedback = Feedback(username=current_user, message=user_message)
+        db.session.add(new_feedback)
+        db.session.commit()
+        
+        flash('Feedback saved locally! Thank you.', 'info')
+        return redirect(url_for('feedback'))
+
+    return render_template('feedback.html')
+
+@cal.route('/admin/feedback', methods=['GET', 'POST'])
+def view_feedback():
+    ADMIN_PASSWORD = "cal@80billion"
+    
+    
+    if request.method == 'POST':
+        entered_password = request.form.get('password')
+        if entered_password == ADMIN_PASSWORD:
+            session['is_admin'] = True
+        else:
+            flash('Incorrect admin password.', 'danger')
+            return redirect(url_for('view_feedback'))
+
+    
+    if session.get('is_admin'):
+        all_feedback = Feedback.query.order_by(Feedback.date_sent.desc()).all()
+        
+        html = '''
+        <div style="font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto;">
+            <h2>Received Feedback</h2>
+            <p><a href="/admin/logout">Logout as Admin</a></p><hr>
+        '''
+        for item in all_feedback:
+            html += f'''
+            <div style="background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+                <strong>{item.username}</strong> <small>({item.date_sent.strftime('%Y-%m-%d %H:%M')})</small><br>
+                <p style="margin-top: 5px;">{item.message}</p>
+            </div>
+            '''
+        html += '</div>'
+        return html
+
+    # Show simple login form if not authorized
+    return '''
+    <div style="max-width: 300px; margin: 80px auto; font-family: sans-serif; text-align: center;">
+        <h3>Admin Verification</h3>
+        <form method="POST">
+            <input type="password" name="password" placeholder="Enter Password" required 
+                   style="width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box;">
+            <button type="submit" style="padding: 10px 20px; background: #212529; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Access Feedback
+            </button>
+        </form>
+    </div>
+    '''
+
+@cal.route('/admin/logout')
+def admin_logout():
+    session.pop('is_admin', None)
+    flash('Logged out from admin panel.', 'info')
+    return redirect(url_for('home'))
+    
+    
+    return html
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     cal.run(host="0.0.0.0", port=port, debug=True)

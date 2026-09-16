@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Feedback - QuickNotes{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 30px auto;">
+    <div class="paper-note">
+        <h2 style="margin-bottom: 15px;">💬 Share Your Feedback</h2>
+        <p style="color: #666; margin-bottom: 20px;">
+            Have a suggestion, feature request, or bug report? Write it below to save it directly to the local database.
+        </p>
+
+        <form action="{{ url_for('feedback') }}" method="POST">
+            <div style="margin-bottom: 15px;">
+                <label for="feedback" style="display: block; font-weight: bold; margin-bottom: 8px;">Your Feedback</label>
+                <textarea class="notebook-lines" id="feedback" name="feedback" rows="6" placeholder="Type your thoughts here..." required style="resize: vertical;"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                {% if session.get('usernm') %}
+                    <a href="{{ url_for('dashboard', usernm=session['usernm']) }}" class="btn" style="background: #e0e0e0; color: #333;">Cancel</a>
+                {% else %}
+                    <a href="{{ url_for('home') }}" class="btn" style="background: #e0e0e0; color: #333;">Cancel</a>
+                {% endif %}
+                <button type="submit" class="btn btn-warning">Submit Feedback</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
